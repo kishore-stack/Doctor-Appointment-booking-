@@ -1,0 +1,26 @@
+@import url('https://fonts.googleapis.com/css2?family=Ancizar+Serif:ital,wght@0,300..900;1,300..900&family=Oswald:wght@200..700&family=Outfit:wght@100..900&family=Protest+Revolution&family=Roboto:ital,wght@0,100..900;1,100..900&family=Special+Gothic+Condensed+One&display=swap');
+
+@import "tailwindcss";
+
+*{
+  font-family: Outfit;
+}
+
+@theme {
+  /* Primary color (for bg-primary etc.) */
+  --color-primary: #2563EB;
+}
+
+.active hr {
+  @apply block;
+}
+
+::-webkit-scrollbar{
+  @apply hidden;
+}
+
+:root {
+  --grid-cols-auto: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+
