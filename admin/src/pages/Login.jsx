@@ -1,9 +1,10 @@
-import React from 'react'
+
 import {assets} from '../assets/assets'
-import { useState } from 'react'
+
 import { AdminContext } from '../context/AdminContext'
 import React, { useState, useContext } from "react";
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 
 const Login = () => {
@@ -17,11 +18,15 @@ const Login = () => {
     if (state === 'Admin') {
         const{data}= await axios.post(backendUrl + '/api/admin/login',{email,password})
         if(data.success){
-            console.log(data.token);
+            localStorage.setItem('aToken',data.token)
+            setAToken(data.token);
         // admin login logic
+        } else {
+            toast.error(data.message)
         }
     } else {
         // doctor login logic
+  
     }
 } catch (error) {
     console.log(error);
@@ -36,11 +41,11 @@ const Login = () => {
     <p className='text-2xl font-semibold m-auto'> <span className='text-primary'>{state}</span> Login</p>
     <div className='w-full'>
         <p>Email</p>
-        <input onClick={(e)=>setEmail(e.target.value)} value={email} className='border border-[#DADADA] rounded w-full p-2 mt-1 ' type='email' required/>
+        <input onChange={(e)=>setEmail(e.target.value)} value={email} className='border border-[#DADADA] rounded w-full p-2 mt-1 ' type='email' required/>
     </div>
     <div className='w-full'>
         <p>Password</p>
-        <input onClick={(e)=>setPassword(e.target.value)} value={password} className='border border-[#DADADA] rounded w-full p-2 mt-1 ' type='password' required/>
+        <input onChange={(e)=>setPassword(e.target.value)} value={password} className='border border-[#DADADA] rounded w-full p-2 mt-1 ' type='password' required/>
     </div>
     <button className='bg-primary text-white rounded p-2 mt-4'>Login</button>
     {state==='Admin' ?<p className='text-sm'>Doctor Login? as <span onClick={()=>setstate('Doctor')} className='text-primary cursor-pointer'>Click here</span></p>:<p className='text-sm'>Admin login? <span onClick={()=>setstate('Admin')} className='text-primary cursor-pointer'>click here</span></p>}
