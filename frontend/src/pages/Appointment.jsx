@@ -17,41 +17,50 @@ const Appointment = () => {
     setDocInfo(docInfo);
     console.log(docInfo);
   }
-  const getAvaliableSlots= async()=>{
-    setDocSlots([])
-    let today= new Date();
-    for(let i=0;i<7;i++){
-      //getting date
+const getAvaliableSlots = async () => {
+  setDocSlots([]);
+  let today = new Date();
+
+  for (let i = 0; i < 7; i++) {
+
     let date = new Date(today);
-date.setDate(today.getDate() + i);
+    date.setDate(today.getDate() + i);
 
-// setting end time
-let endTime = new Date();
-endTime.setDate(today.getDate() + i);
-endTime.setHours(21, 0, 0, 0);
+    let endTime = new Date();
+    endTime.setDate(today.getDate() + i);
+    endTime.setHours(21, 0, 0, 0);
 
-// setting hours
-if (today.getDate() === date.getDate()) {
-  date.setHours(date.getHours() > 10 ? date.getHours() + 1 : 10);
-  date.setMinutes(date.getMinutes() > 30 ? 30 : 0);
-} else {
-  date.setHours(10);
-  date.setMinutes(0);
-}
+    // Start time logic
+    if (i === 0) {
+      let now = new Date();
+      if (now.getHours() >= 21) {
+        // ⬅️ no slots today, return empty array to show the date at least
+        setDocSlots(prev => [...prev, []]);
+        continue;
+      }
+      date.setHours(now.getHours() >= 10 ? now.getHours() + 1 : 10);
+      date.setMinutes(now.getMinutes() > 30 ? 30 : 0);
+    } else {
+      date.setHours(10);
+      date.setMinutes(0);
+    }
 
-let timeSlots = [];
-while (date < endTime) {
-  let formattedTime = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  timeSlots.push({
-    datetime: new Date(date),
-    time: formattedTime
-  });
-  date.setMinutes(date.getMinutes() + 30);
-}
-setDocSlots(prev => [...prev, timeSlots]);
+    let timeSlots = [];
+    while (date < endTime) {
+      timeSlots.push({
+        datetime: new Date(date),
+        time: date.toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit'
+        })
+      });
+      date.setMinutes(date.getMinutes() + 30);
+    }
 
+    setDocSlots(prev => [...prev, timeSlots]);
   }
-}
+};
+
   useEffect(() => {
     fetchDocInfo();
   },[doctors,docId])
