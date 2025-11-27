@@ -1,19 +1,25 @@
 import jwt from "jsonwebtoken";
-//admin authentication middleware
-const authAdmin=async(req,res,next)=>{
+
+// admin authentication middleware
+const authAdmin = async (req, res, next) => {
     try {
-        const{atoken}=req.headers
-        if(!atoken){
-            return res.json({success:false,message:" Not Authorized access denied"})
+        const { atoken } = req.headers;
+
+        if (!atoken) {
+            return res.json({ success: false, message: "Not Authorized. Access Denied" });
         }
-        const token_decoded=jwt.verify(atoken,process.env.JWT_SECRET)
-        if(token_decoded !== process.env.ADMIN_EMAIL+process.env.ADMIN_PASSWORD){
-            return res.json({success:false,message:" Not Authorized access denied"})
+
+        const token_decoded = jwt.verify(atoken, process.env.JWT_SECRET);
+
+        if (token_decoded !== process.env.ADMIN_EMAIL + process.env.ADMIN_PASSWORD) {
+            return res.json({ success: false, message: "Not Authorized. Access Denied" });
         }
+
+        next(); 
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, message: error.message });
     }
-    catch (error) {
-        console.log(error)
-        res.json({success:false,message:error.message})
-    }
-}
-    export default authAdmin
+};
+
+export default authAdmin;
