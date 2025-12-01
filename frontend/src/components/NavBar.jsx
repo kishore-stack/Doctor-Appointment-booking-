@@ -1,12 +1,18 @@
 import React, { useState } from 'react'
 import { assets } from '../assets/assets'
 import { NavLink, useNavigate } from 'react-router-dom'
+import { AppContext } from '../context/AppContext'
+import { useContext } from 'react'
 
 const NavBar = () => {
   const navigate = useNavigate()
   const [showMenu, setShowMenu] = useState(false)
   const [showProfileMenu, setShowProfileMenu] = useState(false)
-  const [token, setToken] = useState(true) // replace with actual auth logic
+  const {token, setToken}= useContext(AppContext)
+  const logout =()=>{
+    setToken(false)
+    localStorage.removeItem('token')
+  }
 
   return (
     <div className="flex items-center justify-between py-4 mb-5 border-b border-gray-300 px-4 md:px-10">
@@ -61,7 +67,7 @@ const NavBar = () => {
                 My Appointment
               </p>
               <p
-                onClick={() => setToken(false)}
+                onClick={logout}
                 className="cursor-pointer hover:text-primary"
               >
                 Logout
