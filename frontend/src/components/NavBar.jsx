@@ -8,7 +8,7 @@ const NavBar = () => {
   const navigate = useNavigate()
   const [showMenu, setShowMenu] = useState(false)
   const [showProfileMenu, setShowProfileMenu] = useState(false)
-  const {token, setToken}= useContext(AppContext)
+  const {token, setToken,userData}= useContext(AppContext)
   const logout =()=>{
     setToken(false)
     localStorage.removeItem('token')
@@ -43,11 +43,11 @@ const NavBar = () => {
       {/* Right Section */}
       <div className="flex items-center gap-4">
         {/* Desktop User Menu */}
-        {token ? (
+        {token && userData ? (
           <div className="relative group hidden md:flex items-center gap-2 cursor-pointer">
             <img
               className="w-8 h-8 rounded-full"
-              src={assets.profile_pic}
+              src={userData.image}
               alt="Profile"
             />
             <img className="w-2.5" src={assets.dropdown_icon} alt="Dropdown" />

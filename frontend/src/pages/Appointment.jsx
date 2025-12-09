@@ -1,13 +1,17 @@
 import React from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { useState, useEffect, useContext } from 'react'
 import {AppContext} from '../context/AppContext'
 import { assets } from '../assets/assets'
 import RelatedDoctor from '../components/RelatedDoctor'
+import axios from 'axios'
+import {toast} from "react-toastify";
+
 const Appointment = () => {
   const {docId} = useParams();
-  const {doctors,currencySymbol} = useContext(AppContext);
+  const {doctors,currencySymbol,backendUrl,token,getDoctorsData} = useContext(AppContext);
   const daysofweek=['SUN','MON','TUE','WED','THU','FRI','SAT']
+  const navigate =useNavigate()
   const[docInfo,setDocInfo]= useState(null);
   const[docSlots,setDocSlots]= useState([]);
   const[slotIndex,setSlotIndex]= useState(0);
@@ -60,6 +64,33 @@ const getAvaliableSlots = async () => {
     setDocSlots(prev => [...prev, timeSlots]);
   }
 };
+const bookAppointment =async()=>{
+if (!token){
+  toast.warn('login to book appointment')
+  return navigate('/login')
+}
+try{
+  const date = docSlots[slotIndex][0].datetime;
+  let day = date.getDate();
+  let month = date.getMonth() + 1; // Months are zero-based
+  let year = date.getFullYear();
+  const slotDate =  day +"_"+ month +"_"+ year;
+  const {data}= await axios.post(backendUrl + '/api/user/book-appointment',{docId,slotTime,slotDate},{headers:{token}})
+  if(data.success){
+    toast.success(data.message);
+    getDoctorsData();
+    navigate('/MyAppointment')
+  } else{
+    toast.error(data.message);
+
+  }
+  console.log(slotDate);
+}
+catch(error){
+  console.log(error)
+  toast.error(error.message)
+}
+}
 
   useEffect(() => {
     fetchDocInfo();
@@ -126,7 +157,7 @@ return (
     <p onClick={() => setSlotTime(item.time)} className={`text-sm font-light flex-shrink-0 px-5 py-2 rounded-full cursor-pointer ${item.time===slotTime ? 'bg-primary text-white' : 'bg-gray-100 text-gray-600'}`} key={index}>{item.time.toLowerCase()}</p>
   ))}
 </div>
-<button className='bg-primary text-white text-small font-light px-5 py-2 rounded-full mt-6'>
+<button onClick={bookAppointment} className='bg-primary text-white text-small font-light px-5 py-2 rounded-full mt-6'>
   BOOK AN APPOINTMENT
 </button>
 </div>

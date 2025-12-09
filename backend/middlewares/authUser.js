@@ -11,7 +11,7 @@ console.log("TOKEN FROM FRONTEND:", token);
             return res.json({ success: false, message: "Not Authorized. Access Denied" });
         }
 
-        const token_decoded = jwt.verify(token, process.env.JWT_SECRET);s
+        const token_decoded = jwt.verify(token, process.env.JWT_SECRET);
 
       req.userId = token_decoded.id
 next()
